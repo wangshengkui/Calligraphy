@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: C:\\Users\\nk\\Desktop\\新建文件夹\\0615\\Calligraphy\\src\\com\\jinke\\rloginservice\\IReadingsLoginService.aidl
+ * Original file: F:\\GITHUB\\Calligraphy\\src\\com\\jinke\\rloginservice\\IReadingsLoginService.aidl
  */
 package com.jinke.rloginservice;
 public interface IReadingsLoginService extends android.os.IInterface

@@ -21,6 +21,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+//import com.example.collectsmartpen.SimplePoint;
+//import com.example.collectsmartpen.SimplePoint;
 import com.example.readAndSave.SmartPenUnitils;
 import com.google.common.collect.ArrayListMultimap;
 import com.jinke.calligraphy.app.branch.Calligraph;
@@ -1074,35 +1076,35 @@ public class DealSmartPenGesture {
 		return sum;
 	}
 
-	private double length(Map<String, ArrayList<SimplePoint>> gesture) {
-		float x = 0, y = 0, tmpx = 0, tmpy = 0;
-		double sum = 0;
-		Set<String> string = gesture.keySet();
-		iter = string.iterator();
-		while (iter.hasNext()) {
-			String string2 = (String) iter.next();
-//			   points.clear();
-			points = gesture.get(string2);
-			for (int j = 0; j < points.size(); j++) {
-				SimplePoint point = points.get(j);
-				if (j == 0) {
-					x = point.x;
-					y = point.y;
-
-					tmpx = x;
-					tmpy = y;
-					sum += Math.sqrt((x - tmpx) * (x - tmpx) + (y - tmpy) * (y - tmpy));
-				} else {
-					x = point.x;
-					y = point.y;
-					sum += Math.sqrt((x - tmpx) * (x - tmpx) + (y - tmpy) * (y - tmpy));
-					tmpx = x;
-					tmpy = y;
-				}
-			}
-		}
-		return sum;
-	}
+//	private double length(Map<String, ArrayList<SimplePoint>> gesture) {
+//		float x = 0, y = 0, tmpx = 0, tmpy = 0;
+//		double sum = 0;
+//		Set<String> string = gesture.keySet();
+//		iter = string.iterator();
+//		while (iter.hasNext()) {
+//			String string2 = (String) iter.next();
+////			   points.clear();
+//			points = gesture.get(string2);
+//			for (int j = 0; j < points.size(); j++) {
+//				SimplePoint point = points.get(j);
+//				if (j == 0) {
+//					x = point.x;
+//					y = point.y;
+//
+//					tmpx = x;
+//					tmpy = y;
+//					sum += Math.sqrt((x - tmpx) * (x - tmpx) + (y - tmpy) * (y - tmpy));
+//				} else {
+//					x = point.x;
+//					y = point.y;
+//					sum += Math.sqrt((x - tmpx) * (x - tmpx) + (y - tmpy) * (y - tmpy));
+//					tmpx = x;
+//					tmpy = y;
+//				}
+//			}
+//		}
+//		return sum;
+//	}
 
 	private double ratio(SmartPenGesture currentSmartPenGesture) {
 		float xmax = 0, ymax = 0, xmin = 0, ymin = 0;
@@ -1140,22 +1142,18 @@ public class DealSmartPenGesture {
 		float lasty = 0;
 		for (int i = 0; i < currentSmartPenGesture.getStrokesCount(); i++) {
 			float[] pointcoor = currentSmartPenGesture.getStrokes().get(i).points;
-			for (int j = 0; j < pointcoor.length - 1; j = j + 2) {
-				if (firstx == 0) {
-					firstx = lastx = pointcoor[j];
-					firsty = lasty = pointcoor[j + 1];
-				} else {
-					lastx = pointcoor[j];
-					lasty = pointcoor[j + 1];
-				}
-			}
+			firstx = lastx = pointcoor[0];
+			firsty = lasty = pointcoor[1];
+			lastx = pointcoor[pointcoor.length-2];
+			lasty = pointcoor[pointcoor.length-1];
 		}
 		double s = Math.sqrt((lastx - firstx) * (lastx - firstx) + (lasty - firsty) * (lasty - firsty));
 		Log.i("di", "ids" + s);
 //		   clo=length(gesture)/s;
 		return s;
 	}
-
+	
+	
 	private double area(SmartPenGesture currentSmartPenGesture) {
 		double area = 0;
 		float xmax = 0, ymax = 0, xmin = 0, ymin = 0;
@@ -1258,7 +1256,11 @@ public class DealSmartPenGesture {
 		yav = (ymax + ymin) / 2;
 		float[] center = getgesturecenter(currentSmartPenGesture);
 		offset = (float) Math.sqrt((xav - center[0]) * (xav - center[0]) + (yav - center[1]) * (yav - center[1]));
-		return offset;
+		if(center[1]>yav) {
+			   return offset/(ymax+ymin)*100;
+		   }else{
+			   return -offset/(ymax+ymin)*100;
+		   }
 	}
 
 	private float[] getgesturecenter(SmartPenGesture currentSmartPenGesture) {
@@ -1277,35 +1279,213 @@ public class DealSmartPenGesture {
 		center[1] = ysum / count;
 		return center;
 	}
-
+	private float strokecurvature(SmartPenGesture currentSmartPenGesture) {
+		float cur =0;
+//		float []c= {0,0,0};
+		double a=0;
+		double b=0;
+//		int i=0;
+		float x1=0,x2=0,y1=0,y2=0,x3=0,y3=0;
+		for (int i = 0; i < currentSmartPenGesture.getStrokesCount(); i++) {
+			float[] pointcoor = currentSmartPenGesture.getStrokes().get(i).points;
+			x1=pointcoor[0];
+			y1=pointcoor[1];
+			x2=pointcoor[pointcoor.length-2];
+			y2=pointcoor[pointcoor.length-1];
+			a=Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));//第一个点与最后一个点距离
+  		    Log.i("pridict", "scoresa" + a);
+			for(int j=2;j<pointcoor.length-3;j=j+2) {
+		    	  x3=pointcoor[j];
+	    		  y3=pointcoor[j+1];
+	    		  b=Math.sqrt((x3-x2)*(x3-x2)+(y3-y2)*(y3-y2))+Math.sqrt((x3-x1)*(x3-x1)+(y3-y1)*(y3-y1))-a;
+	    		  Log.i("pridict", "scorescur" + cur);
+	    		  cur+=b;
+	    		  }
+		   }		
+		   return (float) (cur/a);
+	}
+	private float firstCurvature(SmartPenGesture currentSmartPenGesture) {
+		float cur =0;
+//		float []c= {0,0,0};
+		float x1=0,x2=0,y1=0,y2=0;
+		for (int i = 0; i < currentSmartPenGesture.getStrokesCount(); i++) {
+			float[] pointcoor = currentSmartPenGesture.getStrokes().get(i).points;
+			for (int j = 0; j < pointcoor.length - 1; j = j + 2) {
+			    	  if(x1==0) {
+			    		  x1=pointcoor[j];
+			    		  y1=pointcoor[j + 1];
+			    	  }else if(x2==0){
+			    		  x2=pointcoor[j];
+			    		  y2=pointcoor[j + 1];
+			    	  }else {
+			    		  if(x2==x1)
+			    			  return (float) (Math.PI/2);
+			    		  cur=(float) Math.atan((y2-y1)/(x2-x1));
+			    	  }
+			   }
+		   }
+		   return cur*10;
+	}
+	private float lastCurvature(SmartPenGesture currentSmartPenGesture) {
+		float cur =0;
+//		float []c= {0,0,0};
+		float x1=0,x2=0,y1=0,y2=0;
+		for (int i = 0; i < currentSmartPenGesture.getStrokesCount(); i++) {
+			float[] pointcoor = currentSmartPenGesture.getStrokes().get(i).points;
+			int j=pointcoor.length;
+			y2=pointcoor[j-1];
+			x2=pointcoor[j-2];
+			y1=pointcoor[j-3];
+			x1=pointcoor[j-4];
+		   }
+		   if(x2==x1) {
+			   return (float) (Math.PI/2);
+		   }
+		   cur=(float) Math.atan((y2-y1)/(x2-x1));
+		   return cur*10;
+	}
+	private float[] disFirstMax(SmartPenGesture currentSmartPenGesture) {
+		float xmax=0,ymax = 0,xmin = 0,ymin = 0;
+		float xfir=0,yfir=0;
+		float[] dis=new float[2];
+		for (int i = 0; i < currentSmartPenGesture.getStrokesCount(); i++) {
+			float[] pointcoor = currentSmartPenGesture.getStrokes().get(i).points;
+			for (int j = 0; j < pointcoor.length - 1; j = j + 2) {
+				if (xmax == 0) {
+					xfir=xmax = xmin = pointcoor[j];
+					yfir=ymax = ymin = pointcoor[j + 1];
+				} else {
+					if (pointcoor[j] > xmax) {
+						xmax = pointcoor[j];
+					} else if (pointcoor[j] < xmin) {
+						xmin = pointcoor[j];
+					}
+					if (pointcoor[j + 1] > ymax) {
+						ymax = pointcoor[j + 1];
+					} else if (pointcoor[j + 1] < ymin) {
+						ymin = pointcoor[j + 1];
+					}
+				}
+			}
+		   }
+		   dis[0]=xfir-xmax;
+		   dis[1]=yfir-ymax;
+		   return dis;   
+	}
+	private float[] disFirstMin(SmartPenGesture currentSmartPenGesture) {
+		float xmax=0,ymax = 0,xmin = 0,ymin = 0;
+		float xfir=0,yfir=0;
+		float[] dis=new float[2];
+		for (int i = 0; i < currentSmartPenGesture.getStrokesCount(); i++) {
+			float[] pointcoor = currentSmartPenGesture.getStrokes().get(i).points;
+			for (int j = 0; j < pointcoor.length - 1; j = j + 2) {
+				if (xmax == 0) {
+					xfir=xmax = xmin = pointcoor[j];
+					yfir=ymax = ymin = pointcoor[j + 1];
+				} else {
+					if (pointcoor[j] > xmax) {
+						xmax = pointcoor[j];
+					} else if (pointcoor[j] < xmin) {
+						xmin = pointcoor[j];
+					}
+					if (pointcoor[j + 1] > ymax) {
+						ymax = pointcoor[j + 1];
+					} else if (pointcoor[j + 1] < ymin) {
+						ymin = pointcoor[j + 1];
+					}
+				}
+			}
+		   }
+		dis[0]=xfir-xmin;
+		dis[1]=yfir-ymin;
+		return dis; 
+	}
+	private float[] disLastMax(SmartPenGesture currentSmartPenGesture) {
+		float xmax=0,ymax = 0,xmin = 0,ymin = 0;
+		float xlas=0,ylas=0;
+		float[] dis=new float[2];;
+		for (int i = 0; i < currentSmartPenGesture.getStrokesCount(); i++) {
+			float[] pointcoor = currentSmartPenGesture.getStrokes().get(i).points;
+			for (int j = 0; j < pointcoor.length - 1; j = j + 2) {
+				if (xmax == 0) {
+					xmax = xmin = pointcoor[j];
+					ymax = ymin = pointcoor[j + 1];
+				} else {
+					xlas=pointcoor[j];
+					ylas=pointcoor[j + 1];
+					if (pointcoor[j] > xmax) {
+						xmax = pointcoor[j];
+					} else if (pointcoor[j] < xmin) {
+						xmin = pointcoor[j];
+					}
+					if (pointcoor[j + 1] > ymax) {
+						ymax = pointcoor[j + 1];
+					} else if (pointcoor[j + 1] < ymin) {
+						ymin = pointcoor[j + 1];
+					}
+				}
+			}
+		   }
+		   dis[0]=xlas-xmax;
+		   dis[1]=ylas-ymax;
+		   return dis;   
+	}
+	private float[] disLastMin(SmartPenGesture currentSmartPenGesture) {
+		float xmax=0,ymax = 0,xmin = 0,ymin = 0;
+		float xlas=0,ylas=0;
+		float[] dis=new float[2];;
+		for (int i = 0; i < currentSmartPenGesture.getStrokesCount(); i++) {
+			float[] pointcoor = currentSmartPenGesture.getStrokes().get(i).points;
+			for (int j = 0; j < pointcoor.length - 1; j = j + 2) {
+				if (xmax == 0) {
+					xmax = xmin = pointcoor[j];
+					ymax = ymin = pointcoor[j + 1];
+				} else {
+					xlas=pointcoor[j];
+					ylas=pointcoor[j + 1];
+					if (pointcoor[j] > xmax) {
+						xmax = pointcoor[j];
+					} else if (pointcoor[j] < xmin) {
+						xmin = pointcoor[j];
+					}
+					if (pointcoor[j + 1] > ymax) {
+						ymax = pointcoor[j + 1];
+					} else if (pointcoor[j + 1] < ymin) {
+						ymin = pointcoor[j + 1];
+					}
+				}
+			}
+		   }
+		   dis[0]=xlas-xmin;
+		   dis[1]=ylas-ymin;
+		   return dis;   
+	}
 	public void recognize(SmartPenGesture currentSmartPenGesture) throws IOException {
 		SmartPenGesture currentSmartPenGestureFirstStroke = new SmartPenGesture();
 		SmartPenGesture currentSmartPenGestureOtherStroke = new SmartPenGesture();
+		SmartPenGesture currentSmartPenGestureEveryStroke = new SmartPenGesture();
 		for (int i = 0; i < currentSmartPenGesture.getStrokesCount(); i++) {
-			if (i == 0) {
+			double l=length(currentSmartPenGestureEveryStroke);
+			if(l>0.5) {
+			if (currentSmartPenGestureFirstStroke.getStrokesCount() == 0) {
 				currentSmartPenGestureFirstStroke.addStroke(currentSmartPenGesture.getStrokes().get(i));
 			} else {
 				currentSmartPenGestureOtherStroke.addStroke(currentSmartPenGesture.getStrokes().get(i));
 			}
+			}
 		}
 		String filename = "libsvmdata" + ".txt";
 		String modelname1 = "model_r" + ".txt";
-		String modelname2 = "model_l" + ".txt";
+//		String modelname2 = "model_l" + ".txt";
 		String outputname = "out_r" + ".txt";
 		String filepath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + filename;
 		String modelpath1 = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + modelname1;
-		String modelpath2 = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + modelname2;
+//		String modelpath2 = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + modelname2;
 		String outputpath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + outputname;
 		String[] parg1 = {
 //				   "-b","1",
 				filepath, // 测试数据存放路径
 				modelpath1, // 调用训练以后的模型
-				outputpath,// 生成的结果文件路径
-		};
-		String[] parg2 = {
-//				   "-b","1",
-				filepath, // 测试数据存放路径
-				modelpath2, // 调用训练以后的模型
 				outputpath,// 生成的结果文件路径
 		};
 		if (currentSmartPenGestureOtherStroke.getStrokesCount() > 2) {
@@ -1379,6 +1559,7 @@ public class DealSmartPenGesture {
 				message.setData(bundleTrans);
 				activity.transHandler.sendMessage(message);
 			} else {
+				Log.i("减分：", "未识别2"+f);
 				Log.i("减分：", "未识别2");
 			}
 		}
@@ -1389,22 +1570,30 @@ public class DealSmartPenGesture {
 
 	public GestureInfor svmRecognize(SmartPenGesture currentSmartPenGesture) throws IOException {
 		GestureInfor gestureInfor = null;
+		double l=0;
 		SmartPenGesture currentSmartPenGestureFirstStroke = new SmartPenGesture();
 		SmartPenGesture currentSmartPenGestureOtherStroke = new SmartPenGesture();
+		SmartPenGesture currentSmartPenGestureEveryStroke = new SmartPenGesture();
 		for (int i = 0; i < currentSmartPenGesture.getStrokesCount(); i++) {
-			if (i == 0) {
+//			SmartPenGesture currentSmartPenGestureEveryStroke = new SmartPenGesture();
+			currentSmartPenGestureEveryStroke.addStroke(currentSmartPenGesture.getStrokes().get(i));
+			l=length(currentSmartPenGestureEveryStroke);
+			currentSmartPenGestureEveryStroke.getStrokes().clear();
+			if(l>1) {
+			if (currentSmartPenGestureFirstStroke.getStrokesCount() == 0) {
 				currentSmartPenGestureFirstStroke.addStroke(currentSmartPenGesture.getStrokes().get(i));
 			} else {
 				currentSmartPenGestureOtherStroke.addStroke(currentSmartPenGesture.getStrokes().get(i));
 			}
+			}
 		}
 		String filename = "libsvmdata" + ".txt";
 		String modelname1 = "model_r" + ".txt";
-		String modelname2 = "model_l" + ".txt";
+//		String modelname2 = "model_l" + ".txt";
 		String outputname = "out_r" + ".txt";
 		String filepath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + filename;
 		String modelpath1 = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + modelname1;
-		String modelpath2 = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + modelname2;
+//		String modelpath2 = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + modelname2;
 		String outputpath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + outputname;
 		String[] parg1 = {
 //			   "-b","1",
@@ -1412,12 +1601,12 @@ public class DealSmartPenGesture {
 				modelpath1, // 调用训练以后的模型
 				outputpath,// 生成的结果文件路径
 		};
-		String[] parg2 = {
-//			   "-b","1",
-				filepath, // 测试数据存放路径
-				modelpath2, // 调用训练以后的模型
-				outputpath,// 生成的结果文件路径
-		};
+//		String[] parg2 = {
+////			   "-b","1",
+//				filepath, // 测试数据存放路径
+//				modelpath2, // 调用训练以后的模型
+//				outputpath,// 生成的结果文件路径
+//		};
 		if (currentSmartPenGestureOtherStroke.getStrokesCount() > 2) {
 			gestureInfor = new GestureInfor(-1);// 没有识别出结果，-1代表书写。
 		} 
@@ -1435,6 +1624,9 @@ public class DealSmartPenGesture {
 				if (c <= 8) {
 					gestureInfor = new GestureInfor(c + 15);
 					gestureInfor.setGestureCenter(center[0], center[1]);
+				}else {
+					gestureInfor = new GestureInfor(-1);
+					Log.i("减分：", "未识别3");
 				}
 			} else {
 				gestureInfor = new GestureInfor(-1);// 没有识别出结果，-1代表书写。
@@ -1458,20 +1650,32 @@ public class DealSmartPenGesture {
 	}
 
 	private int predict(SmartPenGesture currentSmartPenGesture, String[] parg) throws IOException {
-		double arr[] = new double[6];
+		double arr[] = new double[17];
+		float[] a=disFirstMax(currentSmartPenGesture);
+        float[] b=disFirstMin(currentSmartPenGesture);
+        float[] c=disLastMax(currentSmartPenGesture);
+        float[] d=disLastMin(currentSmartPenGesture);
 		double l = length(currentSmartPenGesture);
 		Log.i("di", "id" + l);
 		arr[0] = ratio(currentSmartPenGesture);
-		double c = closure(currentSmartPenGesture);
-		arr[1] = l / c;
+		arr[1] = l / closure(currentSmartPenGesture);;
 		arr[2] = (l * l) / area(currentSmartPenGesture);
 		arr[3] = curvature(currentSmartPenGesture);
 		arr[4] = Center_of_mass_offset(currentSmartPenGesture);
-		arr[5] = currentSmartPenGesture.getStrokesCount();
-		if (arr[5] == 3) {
+		arr[5]=strokecurvature(currentSmartPenGesture);
+		arr[6]=firstCurvature(currentSmartPenGesture);
+		arr[7]=lastCurvature(currentSmartPenGesture);
+		for(int j=0;j<2;j++) {
+			arr[j+8]=a[j];
+			Log.i("di", "id"+a[j]);
+			arr[j+10]=b[j];
+			arr[j+12]=c[j];
+			arr[j+14]=d[j];
+		}
+		arr[16] = currentSmartPenGesture.getStrokesCount();
+		if (arr[16] == 3) {
 			return 0;
 		}
-
 		writeinput(arr, parg[0]);
 		svm_predict.main(parg);
 		return readresult(parg[2]);

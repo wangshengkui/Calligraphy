@@ -503,6 +503,7 @@ public class ToolFun {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
+							Log.i("gestureInfor", "getGestureName:"+gestureInfor.getGestureIndex());
 							if(gestureInfor.getGestureName().equals("书写")) {
 								gestureInfor=dealSmartPenGesture.recogniseGesture(currentSmartPenGesture);
 								if (gestureInfor==null) {
