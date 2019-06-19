@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, Calligraph!</string>
+    <string name="app_name">面向教改核心素养深度批改</string>
+    <string name="dateSliderTitle">您选择的日期：</string>
+    <string name="cloud">网络存储</string>
+    <string name="local">本地存储</string>
+    <string name="ink_spread">阴墨速度</string>
+    <string name="onto_screen_time">上屏时间</string>
+    <string name="auto_save_time">自动保存时间</string>
+    <string name="auto_upload_time">自动上传时间</string>
+    <string name="display">字体样式</string>
+    <string name="display_byWidth">宽度保持一致</string>
+    <string name="display_byHeight">高度保持一致</string>
+    <string name="button_add">增加</string>
+    <string name="button_delete">减小</string>
+    <string name="display_parameters">排版参数</string>
+    <string name="display_parameters_word_pad">字间距</string>
+    <string name="display_parameters_base_pad">基准线</string>
+    <string name="cali">毛笔动画效果</string>
+    <string name="cali_a">打开</string>
+    <string name="cali_b">关闭</string>
+    <string name="unknown_device">unknown_device</string>
+    <string name="default_file_name">My Recording</string>
+    
+        <!--  BluetoothChat -->
+    <string name="send">Send</string>
+    <string name="not_connected">You are not connected to a device</string>
+    <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
+    <string name="title_connecting">connecting...</string>
+    <string name="title_connected_to">connected to</string>
+    <string name="title_not_connected">not connected</string>
+    
+        <!--  DeviceListActivity -->
+    <string name="scanning">scanning for devices...</string>
+    <string name="select_device">select a device to connect</string>
+    <string name="none_paired">No devices have been paired</string>
+    <string name="none_found">No devices found</string>
+    <string name="title_paired_devices">Paired Devices</string>
+    <string name="title_other_devices">Other Available Devices</string>
+    <string name="button_scan">Scan for devices</string> 
+    
+</resources>
