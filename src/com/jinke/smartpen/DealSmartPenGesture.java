@@ -24,6 +24,7 @@ import org.jsoup.select.Elements;
 //import com.example.collectsmartpen.SimplePoint;
 //import com.example.collectsmartpen.SimplePoint;
 import com.example.readAndSave.SmartPenUnitils;
+import com.google.common.base.CaseFormat;
 import com.google.common.collect.ArrayListMultimap;
 import com.jinke.calligraphy.app.branch.Calligraph;
 import com.jinke.calligraphy.app.branch.R;
@@ -1023,7 +1024,15 @@ public class DealSmartPenGesture {
 	static String pagexml;
 
 	public int HomeworkContnet(int index, int BookID, int PageID) {
-		pagexml = "book_" + BookID + "_page_" + (PageID % 20) + ".xml";
+		switch (BookID) {
+		case 0:pagexml = "book_" + BookID + "_page_" + (PageID % 20) + ".xml";
+			break;
+		case 1:pagexml = "book_" + BookID + "_page_" + (PageID % 8) + ".xml";
+		break;
+		default:
+			break;
+		}
+		
 
 		File file = new File("/sdcard/xml/" + pagexml);
 		try {
