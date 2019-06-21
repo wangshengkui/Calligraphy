@@ -24,7 +24,6 @@ import org.jsoup.select.Elements;
 //import com.example.collectsmartpen.SimplePoint;
 //import com.example.collectsmartpen.SimplePoint;
 import com.example.readAndSave.SmartPenUnitils;
-import com.google.common.base.CaseFormat;
 import com.google.common.collect.ArrayListMultimap;
 import com.jinke.calligraphy.app.branch.Calligraph;
 import com.jinke.calligraphy.app.branch.R;
@@ -1025,14 +1024,13 @@ public class DealSmartPenGesture {
 
 	public int HomeworkContnet(int index, int BookID, int PageID) {
 		switch (BookID) {
-		case 0:pagexml = "book_" + BookID + "_page_" + (PageID % 20) + ".xml";
-			break;
-		case 1:pagexml = "book_" + BookID + "_page_" + (PageID % 8) + ".xml";
-		break;
-		default:
-			break;
-		}
-		
+		  case 0:pagexml = "book_" + BookID + "_page_" + (PageID % 20) + ".xml";
+		   break;
+		  case 1:pagexml = "book_" + BookID + "_page_" + (PageID % 8) + ".xml";
+		  break;
+		  default:
+		   break;
+		  }
 
 		File file = new File("/sdcard/xml/" + pagexml);
 		try {
@@ -1377,8 +1375,14 @@ public class DealSmartPenGesture {
 				}
 			}
 		   }
-		   dis[0]=xfir-xmax;
-		   dis[1]=yfir-ymax;
+		float c=0;
+		   if((xmax-xmin)>(ymax-ymin)) {
+			   c=(xmax-xmin)/10;
+		   }else {
+			   c=(ymax-ymin)/10;
+		   }
+		   dis[0]=(xfir-xmax)/c;
+		   dis[1]=(yfir-ymax)/c;
 		   return dis;   
 	}
 	private float[] disFirstMin(SmartPenGesture currentSmartPenGesture) {
@@ -1405,8 +1409,14 @@ public class DealSmartPenGesture {
 				}
 			}
 		   }
-		dis[0]=xfir-xmin;
-		dis[1]=yfir-ymin;
+		float c=0;
+		   if((xmax-xmin)>(ymax-ymin)) {
+			   c=(xmax-xmin)/10;
+		   }else {
+			   c=(ymax-ymin)/10;
+		   }
+		dis[0]=(xfir-xmin)/c;
+		dis[1]=(yfir-ymin)/c;
 		return dis; 
 	}
 	private float[] disLastMax(SmartPenGesture currentSmartPenGesture) {
@@ -1435,8 +1445,14 @@ public class DealSmartPenGesture {
 				}
 			}
 		   }
-		   dis[0]=xlas-xmax;
-		   dis[1]=ylas-ymax;
+		float c=0;
+		   if((xmax-xmin)>(ymax-ymin)) {
+			   c=(xmax-xmin)/10;
+		   }else {
+			   c=(ymax-ymin)/10;
+		   }
+		   dis[0]=(xlas-xmax)/c;
+		   dis[1]=(ylas-ymax)/c;
 		   return dis;   
 	}
 	private float[] disLastMin(SmartPenGesture currentSmartPenGesture) {
@@ -1465,8 +1481,14 @@ public class DealSmartPenGesture {
 				}
 			}
 		   }
-		   dis[0]=xlas-xmin;
-		   dis[1]=ylas-ymin;
+		float c=0;
+		   if((xmax-xmin)>(ymax-ymin)) {
+			   c=(xmax-xmin)/10;
+		   }else {
+			   c=(ymax-ymin)/10;
+		   }
+		   dis[0]=(xlas-xmin)/c;
+		   dis[1]=(ylas-ymin)/c;
 		   return dis;   
 	}
 	public void recognize(SmartPenGesture currentSmartPenGesture) throws IOException {

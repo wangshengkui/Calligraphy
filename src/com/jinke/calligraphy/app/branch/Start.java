@@ -1262,37 +1262,37 @@ public static  ArrayList<Integer> tag = new ArrayList<Integer>();
 				
 				
 				
-				try {
-					out = new BufferedWriter(new OutputStreamWriter(
-					         new FileOutputStream(dotfile)));
-					outtemp = new BufferedWriter(new OutputStreamWriter(
-					         new FileOutputStream("sdcard/-1/previous.txt")));
-				} catch (FileNotFoundException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				}
+//				try {
+//					out = new BufferedWriter(new OutputStreamWriter(
+//					         new FileOutputStream(dotfile)));
+//					outtemp = new BufferedWriter(new OutputStreamWriter(
+//					         new FileOutputStream("sdcard/-1/previous.txt")));
+//				} catch (FileNotFoundException e2) {
+//					// TODO Auto-generated catch block
+//					e2.printStackTrace();
+//				}
 				//显示批改环，先将student和teacher的container加入dots和pigai两个container  cahe0426
 				for(Dot dot:studentDotsContainer.get(gCurPageID)) {
 					if(dot.y>=tag.get(2)&&dot.y<=tag.get(3)) {
 						pigaihuanDotsContainer.put(gCurPageID, dot);
-						try {
-							outtemp.write(dot.x+" "+dot.y+" "+dot.type+"\n");
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+//						try {
+//							outtemp.write(dot.x+" "+dot.y+" "+dot.type+"\n");
+//						} catch (IOException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
 						  
 					}
 					
 				}
 				
 				//
-				try {
-					outtemp.close();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+//				try {
+//					outtemp.close();
+//				} catch (IOException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
 				
 	
 				try {
@@ -1325,26 +1325,26 @@ public static  ArrayList<Integer> tag = new ArrayList<Integer>();
 				
 				
 				
-				for(Dot dot:pigaihuanDotsContainer.get(gCurPageID)) {
+//				for(Dot dot:pigaihuanDotsContainer.get(gCurPageID)) {
+//					
+//						try {
+//							out.write(dot.x+" "+dot.y+" "+dot.type+"\n");
+//						} catch (IOException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						
+//						  
+//					}
 					
-						try {
-							out.write(dot.x+" "+dot.y+" "+dot.type+"\n");
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						
-						  
-					}
-					
-				}
-				
-				
-				try {
-					out.close();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+//				}
+//				
+//				
+//				try {
+//					out.close();
+//				} catch (IOException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
 				
 				
 
@@ -1369,6 +1369,36 @@ public static  ArrayList<Integer> tag = new ArrayList<Integer>();
 						pigaihuanPigaiContainer.put(gCurPageID, dot);
 					}
 				}
+				
+				//wsk 2019.6.21
+				//解决批改环内教师笔迹飞
+				try {
+					float d = 0;
+					if(pigaihuanPigaiContainer.get(gCurPageID).get(0)!=null)
+					{
+						pigaihuanPigaiContainer.get(gCurPageID).get(0).type=DotType.PEN_DOWN;
+						
+						for(int i =1;i<pigaihuanPigaiContainer.get(gCurPageID).size();i++) 
+					     {
+					      d=getDistance(pigaihuanPigaiContainer.get(gCurPageID).get(i-1).x,pigaihuanPigaiContainer.get(gCurPageID).get(i).x,
+					    		  pigaihuanPigaiContainer.get(gCurPageID).get(i-1).y,pigaihuanPigaiContainer.get(gCurPageID).get(i).y);
+					      if(d>3) {
+					    	  pigaihuanPigaiContainer.get(gCurPageID).get(i).type=DotType.PEN_DOWN;
+					       
+					      }
+					     
+					     }
+						
+					
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					
+				}
+				
+				
+				
 				c.setTrans(msg.getData().getInt("situ"), msg.getData()
 						.getFloat("yy"));
 	
